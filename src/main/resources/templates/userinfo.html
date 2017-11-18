@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Demo Application OAuth 2.0 Login with Spring Security 5 - User Attributes -</title>
+  <meta charset="utf-8"/>
+</head>
+
+<body>
+<div th:replace="index::logout"></div>
+<h1>Demo Application OAuth 2.0 Login with Spring Security 5 - User Attributes -</h1>
+<div>
+  <span style="font-weight:bold">User Attributes:</span>
+  <ul>
+    <li th:each="attribute : ${attributes}">
+      <span style="font-weight:bold" th:text="${attribute.key}"></span>: <span th:text="${attribute.value}"></span>
+    </li>
+  </ul>
+</div>
+</body>
+</html>

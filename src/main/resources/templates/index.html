@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+  <title>Demo Application OAuth 2.0 Login with Spring Security 5</title>
+  <meta charset="utf-8"/>
+</head>
+<body>
+<div style="float: right" th:fragment="logout" sec:authorize="isAuthenticated()">
+  <div style="float:left">
+    <span style="font-weight:bold">User: </span><span sec:authentication="name">Taro Yamada</span>
+  </div>
+  <div style="float:none">&nbsp;</div>
+  <div style="float:right">
+    <form action="#" th:action="@{/logout}" method="post">
+      <input type="submit" value="Logout"/>
+    </form>
+  </div>
+</div>
+<h1>Welcome Demo Application OAuth 2.0 Login with Spring Security 5 !!</h1>
+<div>
+  You are successfully logged in via the OAuth 2.0 Client
+  -<span style="font-weight:bold" th:text="${authorizedClient.clientRegistration.clientName}">Demo Client</span>-
+</div>
+<div>&nbsp;</div>
+<div>
+  <ul>
+    <li>
+      <a href="/templates/userinfo.html" th:href="@{/attributes}">Display User Attributes at login</a>
+    </li>
+    <li>
+      <a href="/templates/userinfo.html" th:href="@{/attributes/latest}">Display latest User Attributes</a>
+    </li>
+  </ul>
+</div>
+</body>
+</html>
