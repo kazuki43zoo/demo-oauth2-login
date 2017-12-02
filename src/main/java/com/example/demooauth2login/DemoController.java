@@ -46,6 +46,17 @@ public class DemoController {
         .header(HttpHeaders.AUTHORIZATION, "Bearer " + authorizedClient.getAccessToken().getTokenValue())
         .build();
     model.addAttribute("attributes", restOperations.exchange(requestEntity, Map.class).getBody());
+
+//    Map userAttributes = WebClient.builder()
+//        .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + authorizedClient.getAccessToken().getTokenValue())
+//        .build()
+//        .get()
+//        .uri(userInfoUri)
+//        .retrieve()
+//        .bodyToMono(Map.class)
+//        .block();
+//    model.addAttribute("attributes", userAttributes);
+
     return "userinfo";
   }
 

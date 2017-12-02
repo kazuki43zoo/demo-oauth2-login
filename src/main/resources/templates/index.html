@@ -8,7 +8,10 @@
 <body>
 <div style="float: right" th:fragment="logout" sec:authorize="isAuthenticated()">
   <div style="float:left">
-    <span style="font-weight:bold">User: </span><span sec:authentication="name">Taro Yamada</span>
+    <span style="font-weight:bold">User Id:</span>
+    <span sec:authentication="name">1000000</span>
+    <span style="font-weight:bold">User Name:</span>
+    <span sec:authentication="principal.attributes['name']">Taro Yamada</span>
   </div>
   <div style="float:none">&nbsp;</div>
   <div style="float:right">
