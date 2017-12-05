@@ -2,11 +2,11 @@ package com.example.demooauth2login;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,25 +27,33 @@ public class DemoController {
   }
 
   @GetMapping("/")
-  public String index(OAuth2AuthenticationToken authentication, Model model) {
-    model.addAttribute("authorizedClient", this.getAuthorizedClient(authentication));
+  public String index(Authentication authentication, Model model) {
+    if (OAuth2AuthenticationToken.class.isInstance(authentication)) {
+      model.addAttribute("authorizedClient",
+          this.getAuthorizedClient(OAuth2AuthenticationToken.class.cast(authentication)));
+    }
     return "index";
   }
 
   @GetMapping("/attributes")
-  public String userAttributeAtLogin(@AuthenticationPrincipal OAuth2User oauth2User, Model model) {
-    model.addAttribute("attributes", oauth2User.getAttributes());
+  public String userAttributeAtLogin(Authentication authentication, Model model) {
+    if (OAuth2AuthenticationToken.class.isInstance(authentication)) {
+      model.addAttribute("attributes",
+          OAuth2AuthenticationToken.class.cast(authentication).getPrincipal().getAttributes());
+    }
     return "userinfo";
   }
 
   @GetMapping("/attributes/latest")
-  public String userLatestAttribute(OAuth2AuthenticationToken authentication, Model model) {
-    OAuth2AuthorizedClient authorizedClient = this.getAuthorizedClient(authentication);
-    String userInfoUri = authorizedClient.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUri();
-    RequestEntity<Void> requestEntity = RequestEntity.get(URI.create(userInfoUri))
-        .header(HttpHeaders.AUTHORIZATION, "Bearer " + authorizedClient.getAccessToken().getTokenValue())
-        .build();
-    model.addAttribute("attributes", restOperations.exchange(requestEntity, Map.class).getBody());
+  public String userLatestAttribute(Authentication authentication, Model model) {
+    if (OAuth2AuthenticationToken.class.isInstance(authentication)) {
+      OAuth2AuthorizedClient authorizedClient =
+          this.getAuthorizedClient(OAuth2AuthenticationToken.class.cast(authentication));
+      String userInfoUri = authorizedClient.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUri();
+      RequestEntity<Void> requestEntity = RequestEntity.get(URI.create(userInfoUri))
+          .header(HttpHeaders.AUTHORIZATION, "Bearer " + authorizedClient.getAccessToken().getTokenValue())
+          .build();
+      model.addAttribute("attributes", restOperations.exchange(requestEntity, Map.class).getBody());
 
 //    Map userAttributes = WebClient.builder()
 //        .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + authorizedClient.getAccessToken().getTokenValue())
@@ -56,7 +64,7 @@ public class DemoController {
 //        .bodyToMono(Map.class)
 //        .block();
 //    model.addAttribute("attributes", userAttributes);
-
+    }
     return "userinfo";
   }
 
@@ -65,4 +73,9 @@ public class DemoController {
         authentication.getAuthorizedClientRegistrationId(), authentication.getName());
   }
 
+
+public static void main(String... args) {
+  System.out.println(new Pbkdf2PasswordEncoder().encode("test"));
+  System.out.println(new Pbkdf2PasswordEncoder().encode("test"));
+}
 }
